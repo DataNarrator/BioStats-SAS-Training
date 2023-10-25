@@ -1,0 +1,158 @@
+* program02.sas ;
+* Reading in data;
+
+*---------------------------------------------------------------------------*
+  Reading data from an external file.  If the data resides in an external
+  text file rather than in the program you simply need to replace the
+  DATALINES option on the INFILE statement with the folder path and
+  filename of the file in quotes. A dump of an excel file will include
+  names as the first row of the data. This row can be skipped by using
+  the FIRSTOBS option.
+  
+  Contents of file bp.csv 
+
+clinic,dbp6,sbp6,dbpbl,sbpbl
+C,84,138,93,143
+D,89,150,91,140
+A,78,116,100,162
+A,,,86,155
+C,81,145,86,140
+*---------------------------------------------------------------------------*;
+
+* Assume your data is under the folder SAS_Files and contained in bp.csv;
+DATA bp;
+   INFILE 'C:\SAS_Files\bp.csv' DSD FIRSTOBS=2 ;
+   INPUT clinic $  dbp6  sbp6  dbpbl  sbpbl ;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data from an External File';
+RUN;
+
+*---------------------------------------------------------------------------*
+  An alternative way is to use a FILENAME statement which defines a file
+  reference to the external file.  The file reference is used on the
+  INFILE statement
+*---------------------------------------------------------------------------*;
+
+FILENAME bpdata 'C:\SAS_Files\bp.csv';
+DATA bp;
+   INFILE bpdata DSD FIRSTOBS=2  ;
+   INPUT clinic $  dbp6  sbp6  dbpbl  sbpbl ;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data from an External File Using a FILENAME statement';
+RUN;
+
+*---------------------------------------------------------------------------*
+ You can also use the IMPORT procedure to read in data. The following code
+ will read the file listed under DATAFILE and create a SAS dataset called
+ bp. The DBMS parameter indicates the type of external file. 
+ The GETNAMES option uses the first row of the data for variable names.
+ PROC CONTENTS lists the names and attributes of variables on the SAS dataset
+*---------------------------------------------------------------------------*;
+
+PROC IMPORT DATAFILE= 'C:\SAS_Files\bp.csv'
+            OUT = bp
+	    DBMS = csv
+	    REPLACE ;
+	    GETNAMES=yes;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data Using PROC IMPORT';
+RUN;
+PROC CONTENTS DATA=bp ;
+RUN;
+
+* PC SAS can read excel files directly - the sheet and data range can also ;
+* be specified;
+ PROC IMPORT DATAFILE= 'C:\SAS_Files\bp.xls'
+            OUT = bp
+	    DBMS = xls 
+	    REPLACE ;
+	    GETNAMES=yes;
+RUN;
+
+*---------------------------------------------------------------------------*
+ If data on a record is past the position 256 you need to increase the 
+ logical record length (LRECL) to a larger value to read the data in
+ correctly. OBS option limits the number of observation read in.
+*---------------------------------------------------------------------------;
+DATA temp;
+ INFILE 'C:\SAS_Files\tomhs.data' LRECL=500 OBS=6;
+ INPUT @260 jntpain 2. ;
+PROC PRINT DATA=temp;
+TITLE 'Data read in correctly using LRECL option';
+RUN;
+
+*---------------------------------------------------------------------------*
+ Sometimes it is convenient to input more than one observation per line
+ To do this you need to use the trailing @ signs to hold the record.
+ The dataset created here has 10 observations but is input in just 2 lines
+*---------------------------------------------------------------------------*;
+DATA finalgrade;
+INFILE DATALINES;
+INPUT studentid $ grade $ @@;
+DATALINES;
+001 A 002 B 003 B 004 B 005 A 
+006 B 007 A 008 B 009 A 010 C
+;
+PROC PRINT DATA=finalgrade;
+TITLE 'Reading multiple observations per line';
+RUN;
+
+*---------------------------------------------------------------------------*
+  Reading special data in fixed positions requires using a special
+  informat. Special data includes dates, data with imbedded characters, and      
+  character variables longer than 8 characters. Informats end with a period.
+*---------------------------------------------------------------------------*;
+
+DATA taxinfo;
+   INFILE DATALINES;
+   INPUT @1  ssn $11. 
+         @13 taxdate mmddyy10. 
+         @25 income comma6. ;
+DATALINES;
+086-59-9054 04/12/2001  59,365
+405-65-0987 03/05/2002  26,925
+212-44-9054 04/15/2003  44,999
+;
+PROC PRINT DATA=taxinfo;
+   VAR ssn taxdate income ;
+   FORMAT taxdate mmddyy10.;
+TITLE 'Reading in and Displaying Variables With Special Formats';
+RUN;
+
+*---------------------------------------------------------------------------*
+  Using colon modifier. Used when you need or want to use an informat in list
+  directed input. Place : after variable name followed by the informat.       
+*---------------------------------------------------------------------------*;
+
+DATA taxinfo;
+   INFILE DATALINES;
+   INPUT ssn : $11. taxdate : mmddyy10. income : comma6. ;
+   DATALINES;
+086-59-9054 04/12/2001  59,365
+405-65-0987 03/05/2002  26,925
+212-44-9054 04/15/2003  44,999
+;
+PROC PRINT DATA=taxinfo;
+   VAR ssn taxdate income ;
+   FORMAT taxdate mmddyy10.;
+TITLE 'Reading in and Displaying Variables With Special Formats';
+RUN;
+
+*---------------------------------------------------------------------------*
+  Using INFORMAT statement - then INPUT statement is simple 
+*---------------------------------------------------------------------------*;
+
+DATA taxinfo;
+   INFILE DATALINES;
+   INFORMAT ssn $11. taxdate mmddyy10. income comma6.;
+   INPUT ssn taxdate income ;
+   DATALINES;
+086-59-9054 04/12/2001  59,365
+405-65-0987 03/05/2002  26,925
+212-44-9054 04/15/2003  44,999
+;
+PROC PRINT DATA=taxinfo;
+   VAR ssn taxdate income ;
+   FORMAT taxdate mmddyy10.;
+TITLE 'Reading in and Displaying Variables With Special Formats';
+RUN;
