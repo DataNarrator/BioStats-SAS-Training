@@ -1,0 +1,50 @@
+SAS Training 2017
+Exercise #2
+
+
+Advice: You may want to run the program after each step and make sure that portion of the program works correctly before adding to the program to do the next section.
+
+This exercise will use the TOMHS dataset.
+
+A.
+1.	Create a SAS dataset called wtsbp reading the following variables from tomhs.data  (Use the data dictionary from the course notes to find out how to read in the variables and find their descriptions). You will need to use the pointer, informat method of reading data.
+
+ptid, group, age, sex, marital, wtbl, wt6, sbpbl, sbp6
+
+
+2.	Compute two new variables in the data step: change in weight and change in systolic blood pressure.  Name the variables wtdif and sbpdif.  The formula for wtdif is
+
+	wtdif = wt6 – wtbl;  Define sbpdif in a similar manner.
+
+Note: by computing the differences in this way negative values will indicate a decrease from baseline and positive values will indicate an increase from baseline.
+
+Also compute a new variable to represent whether the patient was taking active treatment or placebo.
+
+if group = 6 then active = 2; else active = 1;
+
+Run PROC MEANS to help verify that the data read-in and the new variables are correct.
+
+3.	Use a procedure that displays the number and percent of each gender in the study? What percentage of patients are women?  
+
+4.	Use a procedure that displays the counts and means of the change in weight and systolic BP variables.  What was the average weight and SBP change?
+
+5.	Use a procedure that displays the means in part 4 separately for active and placebo groups. What was the average SBP change in the active group?; in the placebo group? Test if the changes in SBP differed between active and placebo groups using PROC TTEST.
+
+6.	Run proc univariate for the variable wtdif.  What are the 25th, 50th, and 75th percentiles of weight change?
+
+7.	Use a procedure to display the cross-tabulation of patients by marital status and gender.  What is the percentage of men that are currently married? What is  the percentage of women that are currently married?  Note: The values of marital status are 1 = never married; 2=separated; 3=divorced; 4=widowed; 5=married. 
+
+Test if the distribution of marital status differs significantly between men and women (Use the CHISQ option on the table statement)
+
+
+
+B.	In a new program read the following variables from tomhs.data: ptid, age, sex, and income.
+
+1.	Using  if/then/else statements compute a new variable with 5 categories for age (<50,50-54,55-59,60-64, and 65-69). Be sure to account for possible missing values for age.
+
+2.	Using  if/then/else statements compute a variable with two categories for income: making $40,000 or more versus making less that $40,000. Be sure to account for possible missing values for income. See Form 25 in packet for categories of income.
+
+3.	Using PROC FREQ display the distribution of age and income categories.  What percentages of participants are 65-69?  What percentage of participants make $40,000 or more?
+
+4.	Using PROC FREQ display the percentages of persons making $40,000 or more by gender. 
+
