@@ -1,0 +1,53 @@
+SAS Training 2017
+Exercise #1
+
+
+1.	Consider the following dataset on 6 students.
+
+Student ID	Gender	Major	Exam 1	Exam 2
+				
+001	M	BIO	80	84
+002	M	EPI	75	73
+003	F	EPI	90	86
+004	M	BIO	83	85
+005	F	EPI	94	94
+006	F	EPI	88	84
+
+
+a.	Write a SAS program that reads in the data within the program. Call the variables StudentID, Gender, Major, Exam1, and Exam2. StudentID, Gender, and Major are character variables; exam1 and exam 2 are numeric variables. Name the SAS dataset class.
+
+b.	Display the values of the variables using PROC PRINT.  Make sure the variables have been read in correctly. Also, run PROC CONTENTS to display information about the dataset created.
+
+c.	Use PROC FREQ to tabulate the number of men and women, and the number in each department.
+
+d.	Use PROC MEANS to compute summary statistics for exam 1 and exam 2. What is the average score for each exam?
+
+e.	Go back into the DATA step and add one variable named final which is the average of exam1 and exam2. The line of code for this is:
+
+final = (exam1 + exam2)/2;
+
+f.	Use PROC PRINT to verify the new variable was computed correctly.
+g.	Use PROC MEANS to compute summary statistics for the final grade. 
+h.	Use PROC SGPLOT to plot exam2 versus exam1 on an x-y plot. Use the following code:
+
+PROC SGPLOT data=class;
+ SCATTER x=exam1 y=exam2;
+RUN;
+
+i.	Save your program to the PC. Give it the name exercise1. It will automatically have a .sas extension.
+j.	Exit SAS after you have saved your program. Then enter SAS again and bring in the program that you saved.
+
+2.	The data file students.csv contains made-up data on 12 students.  The file is a “CSV” file with a comma delimiter and multiple commas for missing data.  The variables are gender (F or M), age, marital status (S or M), number of credits taken, and state of residence (MN, WI, or IA).  
+
+a.	Write a SAS program that reads the data from students.csv and creates a SAS dataset called students. Name the variables gender, age, marstat, credits, and state. The variables gender, marstat, and state are character variables; age and credits are numeric variables. The first two statements will include the following:
+
+DATA students;
+INFILE ‘C:\folderpath\students.csv’ … more options …;
+
+*** Note: Since the first row of the file contains column headings you will need to use the FIRSTOBS=2 option on the INFILE statement to skip over this row.
+
+
+Display the list of variables on the dataset using PROC CONTENTS. Also display the values of the variables using PROC PRINT. Also run PROC MEANS and PROC FREQ on the dataset.
+
+b.	Instead of using a data-step, use PROC IMPORT to read the file creating a dataset called students2.  Run PROC CONTENTS and PROC PRINT as before on this dataset.
+
