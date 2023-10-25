@@ -1,0 +1,160 @@
+* program01.sas ;
+* Reading in data;
+
+*---------------------------------------------------------------------------*
+ List Directed Input: Reading data values separated by spaces. Character
+ variables are indicated by a $ after the variable name
+ The "." indicates missing data. Note: Data between rows need not line up.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES;
+   INPUT clinic $ dbp6 sbp6 dbpbl sbpbl;
+   DATALINES;
+C 84 138 93 143
+D 89 150 91 140
+A 78 116 100 162 
+A . . 86 155 
+C 81 145 86 140
+;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data Using List Input - Data Separated by Spaces';
+RUN;
+* Find out information about the SAS data set created;
+PROC CONTENTS DATA=bp VARNUM;
+RUN;
+
+*---------------------------------------------------------------------------*
+ List Directed Input: Reading data values separated by commas. Values can 
+ also be separated by other delimiters. Using DLM option.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES DLM = ',';
+   INPUT clinic $ dbp6 sbp6 dbpbl sbpbl;
+   DATALINES;
+C,84,138,93,143
+D,89,150,91,140
+A,78,116,100,162
+A,.,.,86,155
+C,81,145,86,140
+;
+
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data using List Input - Values separated by a comma';
+RUN;
+
+
+*---------------------------------------------------------------------------*
+ List Directed Input: Reading data separated by a comma (.csv file from
+ Excel) and consecutive commas are used to indicate missing data. 
+ The DSD option on the INFILE statement assigns missing values when consecutive 
+ delimiters are found.  This option also strips off quotes from character
+ variables if present.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES DLM = ',' DSD ;
+   INPUT clinic $ dbp6 sbp6 dbpbl sbpbl;
+   DATALINES;
+C,84,138,93,143
+D,89,150,91,140
+A,78,116,100,162
+A,,,86,155
+C,81,145,86,140
+;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data using the DSD Option on the INFILE Command';
+RUN;
+
+
+*---------------------------------------------------------------------------*
+ List Directed Input: Reading data values separated by a tab character
+ (.txt file from Excel).  Note: Multiple spaces between data are actually a 
+ tab character. The '09' is the hexidecimal (x) value for the tab character.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES DLM = '09'x DSD;
+   INPUT clinic $ dbp6 sbp6 dbpbl sbpbl;
+   DATALINES;
+C	84	138	93	143
+D	89	150	91	140
+A	78	116	100	162
+A			86	155
+C	81	145	86	140
+;
+PROC PRINT DATA=bp;
+TITLE 'Reading in Data using List Input - Values separated by a tab';
+RUN;
+
+*---------------------------------------------------------------------------*
+ Column Input: Reading data positioned in fixed columns.  The user specifies 
+ the beginning and ending positions. Character variables are followed by a $
+ after the name.  Note: each variable has to be in the same position in each 
+ row of data.  Missing data can be represented by blanks. There are no DLM
+ or DSD options when using column input.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES  ;
+   INPUT clinic $   1-1
+         dbp6       2-4
+         sbp6       5-7
+         dbpbl      8-10
+         sbpbl     11-13 ;
+   DATALINES;
+C084138093143
+D089150091140
+A078116100162
+A      086155
+C081145086140
+;
+PROC PRINT DATA=bp;
+Title 'Reading in Data using Column Input';
+RUN;
+
+
+*---------------------------------------------------------------------------*
+ Reading data using Pointers and Informats.  This is another method of
+ reading in data in fixed columns. The user specifies the starting position,
+ the variable name, and an INFORMAT for each variable.
+*---------------------------------------------------------------------------*;
+
+DATA bp;
+   INFILE DATALINES  ;
+   INPUT @1  clinic $1.
+         @2  dbp6    3.
+         @5  sbp6    3.
+         @8  dbpbl   3.
+         @11 sbpbl   3. ;
+   DATALINES;
+C084138093143
+D089150091140
+A078116100162
+A      086155
+C081145086140
+;
+PROC PRINT DATA=bp;
+Title 'Reading in Data using Pointers and Informats';
+RUN;
+
+
+*---------------------------------------------------------------------------*
+ Reading data using Informat Lists:  Many variables can be read in
+ with little coding if you use array type names for variables and each
+ variable has the same INFORMAT.  This example reads in 35 variables, with
+ names QL1, QL2, ... Q35 starting in position one.
+*---------------------------------------------------------------------------*;
+
+DATA quallife;
+   INFILE DATALINES ;
+   INPUT @1 (QL1-QL35) (1.) ;
+   DATALINES;
+31232242414444223544545354455342324
+21112353214352552525522662566553533
+21122252241333356262662366266551525
+;
+PROC PRINT DATA=quallife;
+Title 'Reading in Data using Informat Lists';
+RUN;
