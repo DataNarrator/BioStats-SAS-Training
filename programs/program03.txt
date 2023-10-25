@@ -1,0 +1,113 @@
+* program03.sas ;
+* Descriptive procedures, plots;
+
+DATA weight;
+ *INFILE 'C:\SAS_Files\tomhs.data';
+ INFILE '~/SAS_Files/tomhs.data';
+ INPUT @1 ptid $10. @12 clinic $1. @30 sex $1. @58 height 4.1 @85 weight 5.1; 
+ bmi = (weight*703.0768)/(height*height);
+RUN;
+
+PROC PRINT DATA = weight (OBS=5) ;
+TITLE 'Proc Print: Five observations from the TOMHS Study';
+RUN;
+
+PROC MEANS DATA = weight ;
+ VAR  height weight bmi;
+ TITLE 'Proc Means Example 1';
+RUN;
+
+* MAXDEL option limits number of decimal places displayed;
+PROC MEANS DATA = weight MEAN MEDIAN STD MAXDEC=2 ;
+ VAR  height weight bmi;
+ TITLE 'Proc Means Example 2 (specifying options)';
+RUN;
+
+* Get statistics separately for each clinical center. The 
+  FW option limits the size of the columns of output displayed;
+PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
+ VAR  height weight bmi;
+ CLASS clinic;
+ TITLE 'Proc Means Example 3 (Using a CLASS statement)';
+RUN;
+
+PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
+ VAR  height weight bmi;
+ CLASS clinic;
+ WAYS 0 1;
+ TITLE 'Proc Means Example 3B (Using a CLASS statement)';
+RUN;
+
+* Could also sort the data by clinic and then use BY statement;
+PROC SORT data=weight; BY clinic;
+PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
+ VAR  height weight bmi;
+ TITLE 'Proc Means Example 4 (Using a BY statement)';
+ BY clinic;
+RUN;
+
+PROC UNIVARIATE DATA = weight PLOT nextrobs=10  ;
+ ID ptid;
+ VAR bmi;
+ TITLE 'Proc Univariate Example 1';
+RUN;
+
+*---------------------------------------------------------------------------*
+  High resolution graphs can also be produced.  
+  The HISTOGRAM statement produces a high resolution histogram. The 
+  PROBPLOT statement creates a high resolution normal probability plot.
+  The INSET statement inserts summary statistics as part of the histogram.
+*---------------------------------------------------------------------------*;
+ods graphics on;
+PROC UNIVARIATE DATA = weight ;
+ VAR bmi;
+ HISTOGRAM bmi / NORMAL MIDPOINTS=20 to 40 by 2;
+ INSET N    = 'N' (5.0)
+       MEAN = 'Mean' (5.1)
+       STD  = 'Sdev' (5.1)
+       MIN  = 'Min'  (5.1)
+       MAX  = 'Max'  (5.1)/ POS=NW HEADER='Summary Statistics';
+ LABEL bmi = 'Body Mass Index (kg/m2)';
+ TITLE 'Histogram and Normal Plot of BMI';
+ PROBPLOT bmi/NORMAL (MU=est SIGMA=est);
+RUN;
+
+PROC SGPLOT;
+ HISTOGRAM bmi;
+ DENSITY bmi/type=normal;
+ TITLE 'Histogram of BMI';
+RUN;
+
+PROC SGPLOT;
+ hBOX BMI; 
+ TITLE 'Boxplot of BMI';
+RUN;
+
+PROC SGPLOT;
+ VBOX bmi;
+ TITLE 'Boxplot of BMI';
+RUN;
+
+PROC SGPLOT;
+ SCATTER X=height Y=weight;
+ TITLE 'Weight vs Height';
+run;
+
+PROC SGPLOT;
+ TITLE "Boxplot of BMI for Men and Women";
+  HBOX bmi/CATEGORY=sex;
+RUN;
+
+*---------------------------------------------------------------------------*
+  With the Output Delivery System (ODS) you can selectively include portions
+  of the output to go to the output window, thus reducing the amount of output
+  generated. Each piece of output has a name that can be selected.
+*---------------------------------------------------------------------------*;
+
+*ODS TRACE ON/LISTING; * Lists the names of the pieces of output;
+ODS SELECT BasicMeasures Quantiles ; 
+PROC UNIVARIATE DATA = weight ;
+ ID ptid;
+ VAR bmi;
+ TITLE 'Proc Univariate Selecting Only the Basic Measures and Quantiles';
+RUN;
