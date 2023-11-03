@@ -1,17 +1,25 @@
 * program03.sas ;
 * Descriptive procedures, plots;
 
-* On line 7, you must change the file location address to the exact location, including the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
-* At the INPUT statement, ptid starts at the first character there are 10 spaces reserved for the ptid. Clinic starts at the 12th character, from left to right. There is 1 space reserved for clinic. 
+* On line 8, you must change the file location address to the exact location, including the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
+* At the INPUT statement, ptid starts at the first character there are 10 spaces reserved for the ptid. Clinic starts at the 12th character, from left to right. There is 1 space reserved for clinic. ;
 DATA weight;
  *INFILE 'C:\SAS_Files\tomhs.data'; 
  INFILE '~/SAS_Files/tomhs.data';
- INPUT @1 ptid $10. @12 clinic $1. @30 sex $1. @58 height 4.1 @85 weight 5.1; 
+ INPUT @1  ptid $10. 
+       @12 clinic $1.
+	      @25 group 1.
+       @30 sex $1. 
+       @58 height 4. 
+       @85 weight 5.
+	      @115 sbpbl 3. 
+	      @123 sbp12 3.;
  bmi = (weight*703.0768)/(height*height);
 RUN;
 
 * OBS = the number of observations to print;
 PROC PRINT DATA = weight (OBS=5) ;
+VAR  ptid clinic sex height weight bmi;
 TITLE 'Proc Print: Five observations from the TOMHS Study';
 RUN;
 
@@ -50,6 +58,12 @@ PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
  VAR  height weight bmi;
  TITLE 'Proc Means Example 4 (Using a BY statement)';
  BY clinic;
+RUN;
+
+* T-test Comparing Active and Placebo Groups;
+PROC TTEST DATA = weight ;
+ CLASS active;
+ VAR  sbpchg;
 RUN;
 
 * The nextrobs option is used to request a different number of extreme observations that PROC UNIVARIATE lists in the table of extreme observations.;
