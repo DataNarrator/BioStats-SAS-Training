@@ -1,7 +1,7 @@
 * program03.sas ;
 * Descriptive procedures, plots;
 
-* On line 7, you must change the file location address to the exact location, include the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
+* On line 7, you must change the file location address to the exact location, including the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
 DATA weight;
  *INFILE 'C:\SAS_Files\tomhs.data'; 
  INFILE '~/SAS_Files/tomhs.data';
