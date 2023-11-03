@@ -2,6 +2,7 @@
 * Descriptive procedures, plots;
 
 * On line 7, you must change the file location address to the exact location, including the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
+* At the INPUT statement, ptid starts at the first character there are 10 spaces reserved for the ptid. Clinic starts at the 12th character, from left to right. There is 1 space reserved for clinic. 
 DATA weight;
  *INFILE 'C:\SAS_Files\tomhs.data'; 
  INFILE '~/SAS_Files/tomhs.data';
