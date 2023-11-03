@@ -7,9 +7,25 @@ Advice: You may want to run the program after each step and make sure that porti
 This exercise will use the TOMHS dataset.
 
 A.
-1.	Create a SAS dataset called wtsbp reading the following variables from tomhs.data  (Use the data dictionary from the course notes to find out how to read in the variables and find their descriptions). You will need to use the pointer, informat method of reading data.
+1.	To create a SAS dataset called wtsbp reading the following variables from tomhs.data  (Use the data dictionary from the course notes to find out how to read in the variables and find their descriptions). You will need to use the pointer, informat method of reading data.
 
 ptid, group, age, sex, marital, wtbl, wt6, sbpbl, sbp6
+* Use the exact script below to import the dataset tomhs.data and 
+* Part A;
+* Part 1;
+data wtsbp;
+ INFILE '~/SASBiostat/2017/Data/tomhs.data';
+ input
+      @1    ptid $10
+      @25   group 1.
+      @27   age 2.
+      @30   sex 1.
+      @47   marital 1.
+      @85   wtbl 5.
+      @91   wt6 5.
+      @115  sbpbl 3.
+      @119  sbp6 3.
+             ;
 
 
 2.	Compute two new variables in the data step: change in weight and change in systolic blood pressure.  Name the variables wtdif and sbpdif.  The formula for wtdif is
