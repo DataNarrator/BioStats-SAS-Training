@@ -1,13 +1,15 @@
 * program03.sas ;
 * Descriptive procedures, plots;
 
+* On line 7, you must change the file location address to the exact location, include the filename and file extension, where you saved the file, tomhs.data, on your machine. Use the forward slash, / ,  as on line 7.;
 DATA weight;
- *INFILE 'C:\SAS_Files\tomhs.data';
+ *INFILE 'C:\SAS_Files\tomhs.data'; 
  INFILE '~/SAS_Files/tomhs.data';
  INPUT @1 ptid $10. @12 clinic $1. @30 sex $1. @58 height 4.1 @85 weight 5.1; 
  bmi = (weight*703.0768)/(height*height);
 RUN;
 
+* OBS = the number of observations to print;
 PROC PRINT DATA = weight (OBS=5) ;
 TITLE 'Proc Print: Five observations from the TOMHS Study';
 RUN;
@@ -17,20 +19,23 @@ PROC MEANS DATA = weight ;
  TITLE 'Proc Means Example 1';
 RUN;
 
-* MAXDEL option limits number of decimal places displayed;
+* MAXDEC option limits number of decimal places displayed. In this example the number of decimals is 2;
 PROC MEANS DATA = weight MEAN MEDIAN STD MAXDEC=2 ;
  VAR  height weight bmi;
  TITLE 'Proc Means Example 2 (specifying options)';
 RUN;
 
-* Get statistics separately for each clinical center. The 
-  FW option limits the size of the columns of output displayed;
+* Get statistics separately for each clinical center. The FW option limits the size of the columns of output displayed;
+* The CLASS statement is used when there is a character or categorical variable you want to output statistiscal metrics for each categorical level;
 PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
  VAR  height weight bmi;
- CLASS clinic;
+ CLASS clinic; 
  TITLE 'Proc Means Example 3 (Using a CLASS statement)';
 RUN;
 
+* WAYS statement specifies the number of ways to make unique combinations of classification variable CLASS. ;
+* USing WAYS creates a one-way types for the classification variable CLASS. It also creates an overall output.;
+* We get the “one-way” analysis of each CLASS variable; that is, the description is broken out by the CLASS variable, 'clinic';
 PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
  VAR  height weight bmi;
  CLASS clinic;
@@ -46,6 +51,8 @@ PROC MEANS DATA = weight N MEAN STD MAXDEC=2 FW=8;
  BY clinic;
 RUN;
 
+* The nextrobs option is used to request a different number of extreme observations that PROC UNIVARIATE lists in the table of extreme observations.;
+* Use 'nextrobs'as a simple way to see the largest and smallest observations in the variable.;
 PROC UNIVARIATE DATA = weight PLOT nextrobs=10  ;
  ID ptid;
  VAR bmi;
@@ -57,6 +64,8 @@ RUN;
   The HISTOGRAM statement produces a high resolution histogram. The 
   PROBPLOT statement creates a high resolution normal probability plot.
   The INSET statement inserts summary statistics as part of the histogram.
+  The MIDPOINTS can be changed minimum to maximam by a certain value (i.e. 2, 5, or 10)
+  The NORMAL option is to output a histogram with a normal distribution (i.e. the bell curve)
 *---------------------------------------------------------------------------*;
 ods graphics on;
 PROC UNIVARIATE DATA = weight ;
@@ -72,6 +81,9 @@ PROC UNIVARIATE DATA = weight ;
  PROBPLOT bmi/NORMAL (MU=est SIGMA=est);
 RUN;
 
+* To output statistical graphs you can use the SGPLOT statement ;
+* SGPLOT procedure creates one or more plots and overlays them on a single set of axes;
+* This example has both a histogram and a density plot in one plot space;
 PROC SGPLOT;
  HISTOGRAM bmi;
  DENSITY bmi/type=normal;
@@ -88,11 +100,13 @@ PROC SGPLOT;
  TITLE 'Boxplot of BMI';
 RUN;
 
+* A scatterplot, SCATTER, is used to graphically see the distribution of two numeric variables, see below, height and weight;
 PROC SGPLOT;
  SCATTER X=height Y=weight;
  TITLE 'Weight vs Height';
 run;
 
+* The HBOX statement outputs a horizontal boxplot;
 PROC SGPLOT;
  TITLE "Boxplot of BMI for Men and Women";
   HBOX bmi/CATEGORY=sex;
